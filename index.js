@@ -4,7 +4,7 @@ dotenv.config()
 var nodemailer = require('nodemailer')
 
 var data = []
-var minutes = 5,
+var minutes = 6,
   the_interval = minutes * 60 * 1000
 
 let sendNotification = (rev, ageLimit) => {
@@ -30,7 +30,7 @@ let sendNotification = (rev, ageLimit) => {
     if (error) {
       console.log(error)
     } else {
-      console.log('Email sent: ' + info.response)
+      //console.log('Email sent: ' + info.response)
       process.exit()
     }
   })
@@ -49,9 +49,8 @@ let callAPI = async (rev) => {
             }
           }
         )
-        console.log(capacity, ageLimit, vaccine, rev)
+        //console.log(capacity, ageLimit, vaccine, rev)
         if ((capacity > 0) & (vaccine == 'COVISHIELD')) {
-          console.log(rev)
           data.push({ rev, capacity, ageLimit })
         }
       } else {
@@ -70,10 +69,9 @@ setInterval(async () => {
     nextDay.setDate(nextDay.getDate() + i)
     var d = nextDay.toJSON().split('T')[0]
     var rev = d.split('-').reverse().join('-')
-    //console.log(rev)
     await callAPI(rev)
   }
   if (data.length) {
     sendNotification(data[0].rev, data[0].ageLimit)
   }
-}, 5000)
+}, minutes)
